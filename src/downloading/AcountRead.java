@@ -14,7 +14,7 @@ public class AcountRead {
 		String buf = null;
 		Stack<String> mystack = new Stack<String>();
 		while ((buf = bfrBufferedReader.readLine()) != null) {
-			mystack.push(buf.split("	")[5]);
+			mystack.push(buf.split("	")[0]);
 		}
 		frFileReader.close();
 		return mystack;// 此处得出所有包名压入栈内。

@@ -1,46 +1,49 @@
 package downloading;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.Stack;
 
 public class MultiThread implements Runnable {
 	public static HashMap<String, String> resultMap = new HashMap<String, String>();
+	public static int i = 0;// 已查找个数
+	public static int j = 0;// 未找到个数
 
 	@Override
-	public void run() {
+	public void run() {// 待重写
 		search se = new search();
-		AcountRead acr = new AcountRead();
+
 		PrintResult printRes = new PrintResult();
-		IsUrlAvailable avi = new IsUrlAvailable();
-		int i = 0;
-		int j = 0;
+		// IsUrlAvailable avi = new IsUrlAvailable();
+		// int i = 0;
+		// int j = 0;
 		try {
-			Stack<String> stack = acr.readpack();
-			int h = stack.size();
-			while (!stack.empty()) {
-				String tempString = stack.pop();
-				if (avi.canConnect("https://play.google.com/store/apps/details?id="
-						+ tempString)) {
-					resultMap.put(tempString, se.fun(tempString));
-					System.out.println("已查找到的个数： " + i);
-					i++;
-					Thread.sleep(500);
-				} else {
-					resultMap.put(tempString, "App Not Found");
-					System.out.println("发现已下架应用的个数： " + j);
+			// Stack<String> stack = acr.readpack();
+
+			while (!loading.stack.empty()) {
+				String tempString = loading.stack.pop();
+				resultMap.put(tempString, se.fun(tempString));
+				System.out.println("已查找到的个数： " + i);
+				Thread.sleep(1000);
+				i++;
+				if (resultMap.get(tempString) == "app offline") {
+					System.out.println("已下架个数： " + j);
 					j++;
-					Thread.sleep(500);
+
 				}
-				System.out.println("目前进度： " + (i + j) + "/" + h);
+
+				System.out.println("目前进度： " + (i + j) + "/" + loading.h);
 				if ((i + j) % 100 == 0) {
 					System.out.println("已阅100个，休息100000毫秒........");
 					printRes.func();
 					Thread.sleep(100000);
 				}
+				if ((i + j) >= loading.h) {
+					System.out.println("任务已完成");
+					printRes.func();
+					System.exit(0);
+				}
 			}
 
-		} catch (IOException | InterruptedException e) {
+		} catch (InterruptedException e) {
 			// TODO 自动生成的 catch 块
 			System.out.println(e);
 		}
